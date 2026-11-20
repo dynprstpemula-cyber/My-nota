@@ -88,16 +88,26 @@
     .pdf-sub-pill,
     .pdf-customer-block,
     .pdf-table-container,
-    .pdf-signatures-row {
+    .pdf-signatures-row,
+    .pdf-sig-label,
+    .pdf-th,
+    .pdf-no-cell,
+    .pdf-uraian-cell,
+    .pdf-tall-col,
+    .pdf-sum-box,
+    .pdf-total-box,
+    .pdf-toast {
       -webkit-user-select: none !important;
       user-select: none !important;
       -webkit-touch-callout: none !important;
+      pointer-events: none;
     }
 
     input, textarea {
       -webkit-user-select: text !important;
       user-select: text !important;
       -webkit-touch-callout: default !important;
+      pointer-events: auto;
     }
 
     body {
@@ -2187,6 +2197,23 @@
         }
       }
     }
+
+    let longPressTimer = null;
+    document.addEventListener('touchstart', (e) => {
+      const isEditable = e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA');
+      if (isEditable) return;
+      clearTimeout(longPressTimer);
+      longPressTimer = setTimeout(() => {
+        clearSelectionNow();
+      }, 350);
+    }, { passive: true, capture: true });
+
+    ['touchend', 'touchmove', 'touchcancel'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        clearTimeout(longPressTimer);
+        clearSelectionNow();
+      }, { passive: true, capture: true });
+    });
 
     // Blokir penyalinan, pemotongan, penempelan, seleksi, dan menu konteks di seluruh halaman
     ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(evtName => {
