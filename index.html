@@ -69,20 +69,11 @@
       -webkit-tap-highlight-color: transparent;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
-    }
-
-    input,
-    textarea {
-      -webkit-user-select: text;
-      -moz-user-select: text;
-      -ms-user-select: text;
-      user-select: text;
-      -webkit-touch-callout: default;
+      -webkit-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
     }
 
     body {
@@ -2162,15 +2153,17 @@
       return html2pdf().set(opt).from(element).save();
     }
 
-    // Cegah salin teks & menu klik-kanan/tekan-tahan di luar kolom input
-    ['copy', 'contextmenu', 'selectstart'].forEach(evtName => {
+    // Blokir penyalinan, pemotongan, penempelan, seleksi, dan menu konteks di seluruh halaman
+    ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(evtName => {
       document.addEventListener(evtName, (e) => {
-        const target = e.target;
-        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
-          return;
-        }
         e.preventDefault();
       });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 'u', 's'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+      }
     });
 
     setupSignatureCanvas('canvasPelanggan');
