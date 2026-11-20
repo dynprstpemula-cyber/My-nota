@@ -76,6 +76,30 @@
       -webkit-touch-callout: none !important;
     }
 
+    /* Proteksi ekstra agar teks label/pesan tidak memunculkan handle seleksi di Android/WebView */
+    .projects-scroll-area > div[style*="text-align:center"],
+    .project-pill,
+    .preview-banner,
+    .preview-subbanner,
+    .preview-customer,
+    .preview-mini-table,
+    .label-pill,
+    .pdf-header-box,
+    .pdf-sub-pill,
+    .pdf-customer-block,
+    .pdf-table-container,
+    .pdf-signatures-row {
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+
+    input, textarea {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+
     body {
       background-color: #121316;
       display: flex;
@@ -1134,7 +1158,7 @@
         <button class="nav-btn btn-anim" onclick="openModal('modalSettings')" title="Pengaturan Tema">
           <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
         </button>
 
@@ -1694,7 +1718,7 @@
       );
 
       if (filtered.length === 0) {
-        homeScrollArea.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:60px; font-weight:600;">Tidak ada proyek ditemukan.<br>Tekan tombol + di bawah untuk membuat baru.</div>`;
+        homeScrollArea.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:60px; font-weight:600; pointer-events:none; user-select:none; -webkit-user-select:none;">Tidak ada proyek ditemukan.<br>Tekan tombol + di bawah untuk membuat baru.</div>`;
         updateLeftScrollThumb();
         return;
       }
@@ -2153,11 +2177,30 @@
       return html2pdf().set(opt).from(element).save();
     }
 
+    function clearSelectionNow() {
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (activeTag === 'input' || activeTag === 'textarea') return;
+      if (window.getSelection) {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0) {
+          sel.removeAllRanges();
+        }
+      }
+    }
+
     // Blokir penyalinan, pemotongan, penempelan, seleksi, dan menu konteks di seluruh halaman
     ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(evtName => {
       document.addEventListener(evtName, (e) => {
-        e.preventDefault();
-      });
+        const isEditable = e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA');
+        if (!isEditable || evtName === 'contextmenu') {
+          e.preventDefault();
+        }
+        clearSelectionNow();
+      }, { capture: true });
+    });
+
+    document.addEventListener('selectionchange', () => {
+      clearSelectionNow();
     });
 
     document.addEventListener('keydown', (e) => {
